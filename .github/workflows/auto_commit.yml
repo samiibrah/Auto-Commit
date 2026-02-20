@@ -3,17 +3,17 @@ name: Auto Commit
 on:
   schedule:
     # 8 runs/day, spread across waking hours (UTC).
-    # Adjust these if your LOCAL_TZ offset differs from UTC-5 (Eastern).
+    # Crons are in UTC — offset by +6 for Central Time.
     # The Python script adds a 0-30 min jitter and re-checks local time,
     # so these exact minute values don't matter much — they're just triggers.
-    - cron: "15 11 * * *"   # 06:15 UTC → ~07:15 ET
-    - cron: "45 12 * * *"   # 07:45 UTC → ~08:45 ET
-    - cron: "20 14 * * *"   # 09:20 UTC → ~10:20 ET
-    - cron: "50 15 * * *"   # 10:50 UTC → ~11:50 ET
-    - cron: "10 17 * * *"   # 12:10 UTC → ~13:10 ET
-    - cron: "35 19 * * *"   # 14:35 UTC → ~15:35 ET
-    - cron: "55 21 * * *"   # 16:55 UTC → ~17:55 ET
-    - cron: "25 01 * * *"   # 20:25 UTC → ~21:25 ET  (next UTC day)
+    - cron: "15 12 * * *"   # 07:15 CT
+    - cron: "45 13 * * *"   # 08:45 CT
+    - cron: "20 15 * * *"   # 10:20 CT
+    - cron: "50 16 * * *"   # 11:50 CT
+    - cron: "10 18 * * *"   # 13:10 CT
+    - cron: "35 20 * * *"   # 15:35 CT
+    - cron: "55 22 * * *"   # 17:55 CT
+    - cron: "25 02 * * *"   # 21:25 CT  (next UTC day)
   workflow_dispatch:        # allow manual trigger for testing
 
 permissions:
@@ -27,10 +27,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Fetch full history so git push works cleanly
           fetch-depth: 0
-          # Use the built-in GITHUB_TOKEN so pushes are attributed correctly
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Configure git remote with PAT
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,6 +43,6 @@ jobs:
         env:
           GIT_USER_NAME:  ${{ vars.GIT_USER_NAME }}
           GIT_USER_EMAIL: ${{ vars.GIT_USER_EMAIL }}
-          LOCAL_TZ:       ${{ vars.LOCAL_TZ }}       # e.g. "America/New_York"
-          COMMIT_PROB:    ${{ vars.COMMIT_PROB }}    # e.g. "0.72"  (optional)
+          LOCAL_TZ:       ${{ vars.LOCAL_TZ }}
+          COMMIT_PROB:    ${{ vars.COMMIT_PROB }}
         run: python auto_commit.py
