@@ -137,7 +137,7 @@ def make_commit():
     message = random.choice(COMMIT_MESSAGES)
     run(["git", "commit", "-m", message])
     run(["git", "push"])
-    print(f"[auto_commit] Committed & pushed: "{message}"")
+    print(f'[auto_commit] Committed & pushed: "{message}"')
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
