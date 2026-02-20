@@ -30,13 +30,13 @@ from zoneinfo import ZoneInfo
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-LOCAL_TZ    = os.getenv("LOCAL_TZ", "America/New_York")
+LOCAL_TZ    = os.getenv("LOCAL_TZ") or "America/Chicago"
 USER_NAME   = os.environ["GIT_USER_NAME"]
 USER_EMAIL  = os.environ["GIT_USER_EMAIL"]
 
 # Base probability that this particular run actually commits.
 # Varies slightly per-run to avoid a perfectly uniform distribution.
-BASE_PROB = float(os.getenv("COMMIT_PROB", "0.72"))
+BASE_PROB = float(os.getenv("COMMIT_PROB") or "0.72")
 
 ACTIVE_HOUR_START = 6   # 06:00 local
 ACTIVE_HOUR_END   = 23  # before 23:00 local  (i.e. ≤ 22:59)
