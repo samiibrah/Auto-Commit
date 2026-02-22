@@ -100,10 +100,7 @@ def jitter_sleep():
 
 def run(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
     print(f"[auto_commit] $ {' '.join(cmd)}")
-    result = subprocess.run(cmd, check=True, text=True, capture_output=True, **kwargs)
-    if result.stdout.strip():
-        print(result.stdout.strip())
-    return result
+    return subprocess.run(cmd, check=True, **kwargs)
 
 
 def make_commit():
@@ -136,6 +133,7 @@ def make_commit():
 
     message = random.choice(COMMIT_MESSAGES)
     run(["git", "commit", "-m", message])
+    run["git", "pull", "--rebase"] 
     run(["git", "push"])
     print(f'[auto_commit] Committed & pushed: "{message}"')
 
